@@ -79,3 +79,26 @@ def products(request):
 
 	})
 
+def view_more(request, slug):
+	current_item=scales.objects.get(slug=slug)
+	current_id=current_item.pk
+	next_item=current_id+1
+	last_id=scales.objects.latest('id')
+	last_id=last_id.pk
+	if next_item > last_id:
+		next_item= scales.objects.get(id=current_id)
+	else:
+		next_item=scales.objects.get(id=next_item)
+	previous_item=current_id-1
+	if previous_item == 0:
+		previous_item= scales.objects.get(id=current_id)
+	else:
+		previous_item=scales.objects.get(id=previous_item)
+
+	return render_to_response('max.html',{
+	'object':get_object_or_404(scales, slug=slug),
+		'next_item':next_item.slug,
+		'previous_item':previous_item.slug
+
+
+	},RequestContext(request))
