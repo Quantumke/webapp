@@ -102,3 +102,30 @@ def view_more(request, slug):
 
 
 	},RequestContext(request))
+def accesories(request):
+	return render_to_response('accesories.html', {})
+def contact(request):
+	context=RequestContext(request)
+
+	return render_to_response('contact.html', {}, context_instance=context)
+def contactus(request):
+	context=RequestContext(request)
+	if request.method=='POST':
+		name=request.POST['name']
+		from_email=request.POST['email']
+		subject=request.POST['subject']
+		message=request.POST['message']
+		form=ContactForm(request.POST)
+		if form.is_valid():
+			try:
+				send_mail(subject,message,from_email,['ben@i254.co.ke'])
+			except BadHeaderError:
+				print ("Invalid Header")
+			#form.save(commit=False)
+			print (name, subject,message)
+			return contact(request)
+		else:
+			print (form.errors)
+	else:
+		form=ContactForm()
+	return render_to_response('contact.html',{'form':form}, context_instance=context)
